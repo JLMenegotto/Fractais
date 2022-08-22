@@ -1,0 +1,344 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Aula_Fracta_Pyt",
+  "ElementResolver": {
+    "ResolutionMap": {}
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Enable Python support and load DesignScript library\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\n#clr.AddReference('Musica')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\n# The inputs to this node will be stored as a list in the IN variables.\r\ndi = IN[0]\r\nan = IN[1]\r\nkf = IN[2]\r\nal = IN[3]\r\n\r\nk  = int(kf)\r\nt  = pow(k, 2)\r\nvx = Vector.XAxis()\r\n\r\nLinhas = []\r\n\r\npt0  = Point.ByCoordinates(0 , 0,  0)\r\npt1  = Point.ByCoordinates(0 , di, 0)\r\nlin  = Line.ByStartPointEndPoint(pt0, pt1)\r\nptm  = Line.PointAtParameter   (lin, 0.5)\r\ndim  = Line.DistanceAtParameter(lin, 0.5)    \r\nori  = CoordinateSystem.ByOrigin(pt0)    \r\norm  = CoordinateSystem.ByOrigin(ptm)   \r\nv0   = Point.AsVector(pt0)\r\nvm   = Point.AsVector(ptm) \r\nva   = Vector.Subtract(vm, v0)    \r\nang  = Vector.AngleWithVector(vx, va)\r\n         \r\nlin.Dispose()\r\n\r\npt2  = Point.ByCylindricalCoordinates(orm,  ang + an, dim * al, dim)\r\npt3  = Point.ByCylindricalCoordinates(orm,  ang - an, dim * al, dim)    \r\nlin0 = Line.ByStartPointEndPoint(pt0, ptm)\r\nlin2 = Line.ByStartPointEndPoint(ptm, pt2)\r\nlin3 = Line.ByStartPointEndPoint(ptm, pt3)\r\n      \r\nLinhas.append(lin0)\r\nLinhas.append(lin2)\r\nLinhas.append(lin3)\r\n\r\nc = 0\r\nwhile c < len(Linhas):\r\n\r\n    l    = Linhas[c]\r\n    pt0  = Line.PointAtParameter   (l, 0)\r\n    pt1  = Line.PointAtParameter   (l, 1)\r\n    ptm  = Line.PointAtParameter   (l, 0.5)\r\n    dim  = Line.DistanceAtParameter(l, 0.5)\r\n    l.Dispose()\r\n    orm  = CoordinateSystem.ByOrigin(ptm)\r\n    v0   = Point.AsVector(pt0)\r\n    vm   = Point.AsVector(ptm) \r\n    va   = Vector.Subtract(vm, v0)    \r\n    ang  = Vector.AngleWithVector(vx, va)\r\n    \r\n    pt2  = Point.ByCylindricalCoordinates(orm, ang + an, dim * al, dim)\r\n    pt3  = Point.ByCylindricalCoordinates(orm, ang - an, dim * al, dim)  \r\n    lin0 = Line.ByStartPointEndPoint(pt0, ptm)\r\n    lin2 = Line.ByStartPointEndPoint(ptm, pt2)\r\n    lin3 = Line.ByStartPointEndPoint(ptm, pt3) \r\n   \r\n    Linhas.append(lin0)\r\n    Linhas.append(lin2)\r\n    Linhas.append(lin3)   \r\n \r\n    if c == t:\r\n       break\r\n    c += 1\r\n\r\n# Saida do outlet\r\nOUT = Linhas",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "2598127dc4ad4868b0caef78eeb74eba",
+      "Inputs": [
+        {
+          "Id": "4da16067b5f7475b82540dcc448565e7",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "15b601d716e7467294411909407916aa",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "c1799d6f59c5451aa3fb8de3001ea9ac",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "5bae0c24222b45a28f0aea8b8de857ae",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "516133d48d4541c1aa11762c1d813d05",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 3.0,
+      "MinimumValue": 1.0,
+      "StepValue": 0.1,
+      "InputValue": 1.6,
+      "Id": "a83e3c065792464a9cf4d8263ec6c92b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "73511eb7f44548c8a2944ddba134b728",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 170.0,
+      "MinimumValue": 10.0,
+      "StepValue": 45.0,
+      "InputValue": 10.0,
+      "Id": "509bb5928357407e9ce720870b822819",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "8e42916b7134460eb13b152949055e6f",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Watch, CoreNodeModels",
+      "NodeType": "ExtensionNode",
+      "Id": "567455b903cb455f90d666ad4ff427c9",
+      "Inputs": [
+        {
+          "Id": "7d98679c1fd2427cab2c33ce55db10b1",
+          "Name": "",
+          "Description": "Node to evaluate.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "ad7cabfe0584473380537dd0e0b38fdc",
+          "Name": "",
+          "Description": "Watch contents.",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Visualize the node's output"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 1.0,
+      "MinimumValue": 0.0,
+      "StepValue": 0.1,
+      "InputValue": 0.0,
+      "Id": "b524bcc31a4d4e42818da4b06255c87c",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "b5fc87a33a0541859587e9a9664b0ca8",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 40.0,
+      "MinimumValue": 0.0,
+      "StepValue": 1.0,
+      "InputValue": 33.0,
+      "Id": "120da9460e2240ba8e7673f917f1b4a4",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "4d6f0abe6c594916a4425d35db871168",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "516133d48d4541c1aa11762c1d813d05",
+      "End": "7d98679c1fd2427cab2c33ce55db10b1",
+      "Id": "61a3f7334ed943ff8b7ba0a02e28cdca",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "73511eb7f44548c8a2944ddba134b728",
+      "End": "4da16067b5f7475b82540dcc448565e7",
+      "Id": "938a2f2237314d34abebc1c653850a0b",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "8e42916b7134460eb13b152949055e6f",
+      "End": "15b601d716e7467294411909407916aa",
+      "Id": "61c268e816f74e80b14c3cce613bd9fc",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "b5fc87a33a0541859587e9a9664b0ca8",
+      "End": "5bae0c24222b45a28f0aea8b8de857ae",
+      "Id": "720f8753224640feb232a0168e2e18be",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "4d6f0abe6c594916a4425d35db871168",
+      "End": "c1799d6f59c5451aa3fb8de3001ea9ac",
+      "Id": "bfea1869df4d4f588a296c3a3adfa3e0",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.13",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "2.0",
+      "Data": {}
+    }
+  ],
+  "Author": "None provided",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.13.1.3887",
+      "RunType": "Automatic",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": 6.1263384819030762,
+      "EyeY": 13.793733596801758,
+      "EyeZ": -1.2785406112670898,
+      "LookX": -2.1150555610656738,
+      "LookY": -6.2471752166748047,
+      "LookZ": -2.5831151008605957,
+      "UpX": -0.48173576593399048,
+      "UpY": 0.64944791793823242,
+      "UpZ": -0.58834367990493774
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Fractal Y",
+        "ShowGeometry": true,
+        "Id": "2598127dc4ad4868b0caef78eeb74eba",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 495.17466300660737,
+        "Y": 511.56321313064461
+      },
+      {
+        "Name": "Tamanho",
+        "ShowGeometry": true,
+        "Id": "a83e3c065792464a9cf4d8263ec6c92b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 52.174663006607375,
+        "Y": 341.56321313064461
+      },
+      {
+        "Name": "Angulo de abertura",
+        "ShowGeometry": true,
+        "Id": "509bb5928357407e9ce720870b822819",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 52.174663006607375,
+        "Y": 488.56321313064461
+      },
+      {
+        "Name": "Watch",
+        "ShowGeometry": true,
+        "Id": "567455b903cb455f90d666ad4ff427c9",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 753.17466300660737,
+        "Y": 511.56321313064461
+      },
+      {
+        "Name": "Fator altura",
+        "ShowGeometry": true,
+        "Id": "b524bcc31a4d4e42818da4b06255c87c",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 52.174663006607375,
+        "Y": 783.56321313064461
+      },
+      {
+        "Name": "Valor K",
+        "ShowGeometry": true,
+        "Id": "120da9460e2240ba8e7673f917f1b4a4",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 52.174663006607375,
+        "Y": 636.56321313064461
+      }
+    ],
+    "Annotations": [],
+    "X": 142.19032272300532,
+    "Y": -96.493085061828424,
+    "Zoom": 0.64136863843469794
+  }
+}

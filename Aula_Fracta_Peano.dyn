@@ -1,0 +1,500 @@
+{
+  "Uuid": "3c9d0464-8643-5ffe-96e5-ab1769818209",
+  "IsCustomNode": false,
+  "Description": "",
+  "Name": "Aula_Fracta_Peano",
+  "ElementResolver": {
+    "ResolutionMap": {
+      "Math": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "Math.Pi": {
+        "Key": "DSCore.Math",
+        "Value": "DSCoreNodes.dll"
+      },
+      "FamilyInstance": {
+        "Key": "Revit.Elements.FamilyInstance",
+        "Value": "RevitNodes.dll"
+      },
+      "DSOffice.Data": {
+        "Key": "DSOffice.Data",
+        "Value": "DSOffice.dll"
+      }
+    }
+  },
+  "Inputs": [],
+  "Outputs": [],
+  "Nodes": [
+    {
+      "ConcreteType": "PythonNodeModels.PythonNode, PythonNodeModels",
+      "NodeType": "PythonScriptNode",
+      "Code": "# Enable Python support and load DesignScript library\r\nimport clr\r\nclr.AddReference('ProtoGeometry')\r\nfrom Autodesk.DesignScript.Geometry import *\r\n\r\nimport math\r\n\r\ndef Dibuja( pto , d , m):\r\n\r\n    ori  = CoordinateSystem.ByOrigin(pto)  \r\n    pt1  = Point.ByCartesianCoordinates( ori ,  d ,  d ,  d )\r\n    pt2  = Point.ByCartesianCoordinates( ori , -d ,  d ,  d ) \r\n    pt3  = Point.ByCartesianCoordinates( ori , -d , -d ,  d )\r\n    pt4  = Point.ByCartesianCoordinates( ori ,  d , -d ,  d )\r\n    \r\n    if    (m == 1):\r\n       Linhas.append(Line.ByStartPointEndPoint(pt1, pt2))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt2, pt3))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt3, pt4))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt4, pt1)) \r\n    elif  (m == 2): \r\n       Linhas.append(Line.ByStartPointEndPoint(pt1, pt2))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt2, pt3))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt4, pt1))            \r\n    else:\r\n       Linhas.append(Line.ByStartPointEndPoint(pt1, pt2))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt2, pt3))\r\n       Linhas.append(Line.ByStartPointEndPoint(pt3, pt4))  \r\n    return Linhas;\r\n\r\n# IN[n] Parametros iniciais\r\nkf     = IN[0]\r\nfd     = IN[1]\r\nmo     = IN[2]\r\ndi     = IN[3]\r\nmodulo = IN[4]\r\nk      = int(kf)\r\ntot    = pow(4, k) \r\n\r\nvx     = Vector.XAxis()\r\nLinhas = []\r\npt0    = Point.ByCoordinates(0, 0, 0)\r\nDibuja ( pt0 , modulo , mo)\r\n         \r\nc = 0\r\nwhile (len(Linhas) < tot) & (k > 1):\r\n                    \r\n      if c <= tot:\r\n         lin  = Linhas[c]\r\n         dim  = Line.DistanceAtParameter( lin , fd   )   \r\n         pt0  = Line.PointAtParameter   ( lin , di )       \r\n         Dibuja (pt0, dim, mo)\r\n      else:\r\n         break\r\n      c   += 1         \r\n         \r\n# Retorno do outlet\r\nOUT = Linhas\r\n",
+      "Engine": "CPython3",
+      "VariableInputPorts": true,
+      "Id": "c963fc13effc4f55a5f373c2a75040dc",
+      "Inputs": [
+        {
+          "Id": "3c67f8dd469c4bdba2d6ad7f1673a65f",
+          "Name": "IN[0]",
+          "Description": "Input #0",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a737fdf6449b473f99225ac6fd88b337",
+          "Name": "IN[1]",
+          "Description": "Input #1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "0207bacdacf74f029926ea2eb9d9c96a",
+          "Name": "IN[2]",
+          "Description": "Input #2",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "4febef50d78047239a1892e23ee540ba",
+          "Name": "IN[3]",
+          "Description": "Input #3",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "383ea4558aa740d29ee1aa1377407ebe",
+          "Name": "IN[4]",
+          "Description": "Input #4",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "dd215d66ce884da2a6e0248f989a337c",
+          "Name": "OUT",
+          "Description": "Result of the python script",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Runs an embedded Python script."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 6.0,
+      "MinimumValue": 1.0,
+      "StepValue": 1.0,
+      "InputValue": 6.0,
+      "Id": "d3731411aa2048e4874f69f22dff8916",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "e3c68e0cc6f4446fbcd0366e59938649",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 1.0,
+      "MinimumValue": 0.05,
+      "StepValue": 0.05,
+      "InputValue": 0.25,
+      "Id": "bb0419a02e58496789e7cb55c9729d5a",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "04ab8ff9e75e49fdaea2870dcb300371",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 3.0,
+      "MinimumValue": 1.0,
+      "StepValue": 1.0,
+      "InputValue": 1.0,
+      "Id": "7a9b76e917724c12931354c262f2b22b",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "834a3f7a04ff4b2db8d200b460ca7c3b",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 1.0,
+      "MinimumValue": 0.0,
+      "StepValue": 0.125,
+      "InputValue": 0.125,
+      "Id": "3f6865cfe733434491030c5d2b5f81d7",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "819341c312594fc0bdd2d3f9e539c6a1",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    },
+    {
+      "ConcreteType": "Dynamo.Graph.Nodes.CodeBlockNodeModel, DynamoCore",
+      "NodeType": "CodeBlockNode",
+      "Code": "O;\nPasta   = \"C:\\\\WOM\\\\out-files\\\\\";\nArqNo   = \"CT_Fractal.txt\";\nArquivo = Pasta + ArqNo;\nLoc     = O.StartPoint;\nx1      = Loc.X;\ny1      = Loc.Y;\nz1      = Loc.Z;\n\nxyz     = x1 + \"\\n\" + y1 + \"\\n\" + z1;\nDSOffice.Data.ExportCSV(Arquivo ,  xyz );",
+      "Id": "94696efbb3cc447b92505f86709e4c96",
+      "Inputs": [
+        {
+          "Id": "6c4c9cd84e614341b15b975c83f8005e",
+          "Name": "O",
+          "Description": "O",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Outputs": [
+        {
+          "Id": "296a7cb3c6fa498c9e94a1c42bea3d3a",
+          "Name": "",
+          "Description": "Value of expression at line 1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "f2b21f3f6cab450b93df508cb60ffc04",
+          "Name": "",
+          "Description": "Pasta",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "86de345c7f4442f9b01b3cc7c20d4ab2",
+          "Name": "",
+          "Description": "ArqNo",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "a44d500daf1c4eba9ebf132b2f841b1e",
+          "Name": "",
+          "Description": "Arquivo",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "2e2c7519d3234cb7b25d7d71c2046cd9",
+          "Name": "",
+          "Description": "Loc",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "e2453305f2574888bb75e4cc15d7f1aa",
+          "Name": "",
+          "Description": "x1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "ccb769c671764617a07dabe4afbedcc9",
+          "Name": "",
+          "Description": "y1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "35f9deff6b5c47dcbe25a6f1e0835b7d",
+          "Name": "",
+          "Description": "z1",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "77e905e253fb438d9048d281f293d3ab",
+          "Name": "",
+          "Description": "xyz",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        },
+        {
+          "Id": "d9241efe7ed44b5297c870f574749a04",
+          "Name": "",
+          "Description": "Value of expression at line 11",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "Allows for DesignScript code to be authored directly"
+    },
+    {
+      "ConcreteType": "CoreNodeModels.Input.DoubleSlider, CoreNodeModels",
+      "NodeType": "NumberInputNode",
+      "NumberType": "Double",
+      "MaximumValue": 300.0,
+      "MinimumValue": 50.0,
+      "StepValue": 25.0,
+      "InputValue": 125.0,
+      "Id": "0b8d8b1571224ffe99ff4482648af1c2",
+      "Inputs": [],
+      "Outputs": [
+        {
+          "Id": "53311a4ed8b74cb7a84f83617314e874",
+          "Name": "",
+          "Description": "Double",
+          "UsingDefaultValue": false,
+          "Level": 2,
+          "UseLevels": false,
+          "KeepListStructure": false
+        }
+      ],
+      "Replication": "Disabled",
+      "Description": "A slider that produces numeric values."
+    }
+  ],
+  "Connectors": [
+    {
+      "Start": "dd215d66ce884da2a6e0248f989a337c",
+      "End": "6c4c9cd84e614341b15b975c83f8005e",
+      "Id": "b34867ab25c5423c97bb33fa6361f834",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "e3c68e0cc6f4446fbcd0366e59938649",
+      "End": "3c67f8dd469c4bdba2d6ad7f1673a65f",
+      "Id": "cfabc6b57962405fb8a72b8290c5f65c",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "04ab8ff9e75e49fdaea2870dcb300371",
+      "End": "a737fdf6449b473f99225ac6fd88b337",
+      "Id": "2af38a198d4a4dd0bc2f1cf540d51345",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "834a3f7a04ff4b2db8d200b460ca7c3b",
+      "End": "0207bacdacf74f029926ea2eb9d9c96a",
+      "Id": "6f28f29c98c044ae8ffe62fb18266560",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "819341c312594fc0bdd2d3f9e539c6a1",
+      "End": "4febef50d78047239a1892e23ee540ba",
+      "Id": "4f0dc09f2505477bb2294268ca4cb8f5",
+      "IsHidden": "False"
+    },
+    {
+      "Start": "53311a4ed8b74cb7a84f83617314e874",
+      "End": "383ea4558aa740d29ee1aa1377407ebe",
+      "Id": "f584d25f14844001a0dd43e1cadcd391",
+      "IsHidden": "False"
+    }
+  ],
+  "Dependencies": [],
+  "NodeLibraryDependencies": [
+    {
+      "Name": "CT_Fractal.txt",
+      "ReferenceType": "External",
+      "Nodes": [
+        "94696efbb3cc447b92505f86709e4c96"
+      ]
+    }
+  ],
+  "Thumbnail": "",
+  "GraphDocumentationURL": null,
+  "ExtensionWorkspaceData": [
+    {
+      "ExtensionGuid": "28992e1d-abb9-417f-8b1b-05e053bee670",
+      "Name": "Properties",
+      "Version": "2.13",
+      "Data": {}
+    },
+    {
+      "ExtensionGuid": "DFBD9CC0-DB40-457A-939E-8C8555555A9D",
+      "Name": "Generative Design",
+      "Version": "2.0",
+      "Data": {}
+    }
+  ],
+  "Author": "None provided",
+  "Linting": {
+    "activeLinter": "None",
+    "activeLinterId": "7b75fb44-43fd-4631-a878-29f4d5d8399a",
+    "warningCount": 0,
+    "errorCount": 0
+  },
+  "Bindings": [],
+  "View": {
+    "Dynamo": {
+      "ScaleFactor": 1.0,
+      "HasRunWithoutCrash": true,
+      "IsVisibleInDynamoLibrary": true,
+      "Version": "2.13.1.3887",
+      "RunType": "Automatic",
+      "RunPeriod": "1000"
+    },
+    "Camera": {
+      "Name": "Background Preview",
+      "EyeX": 247.18360900878906,
+      "EyeY": 850.14678955078125,
+      "EyeZ": 99.674774169921875,
+      "LookX": -8.9207305908203125,
+      "LookY": -667.70123291015625,
+      "LookZ": 302.46243286132813,
+      "UpX": 0.028837040066719055,
+      "UpY": -0.20791186392307281,
+      "UpZ": -0.97772234678268433
+    },
+    "ConnectorPins": [],
+    "NodeViews": [
+      {
+        "Name": "Fractal Peano",
+        "ShowGeometry": true,
+        "Id": "c963fc13effc4f55a5f373c2a75040dc",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 597.69402617785818,
+        "Y": 300.72178919772563
+      },
+      {
+        "Name": "Valor K",
+        "ShowGeometry": true,
+        "Id": "d3731411aa2048e4874f69f22dff8916",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 125.36708190647687,
+        "Y": 109.72331503608626
+      },
+      {
+        "Name": "Valor d",
+        "ShowGeometry": true,
+        "Id": "bb0419a02e58496789e7cb55c9729d5a",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 119.69216465182535,
+        "Y": 241.98248408860576
+      },
+      {
+        "Name": "Modos",
+        "ShowGeometry": true,
+        "Id": "7a9b76e917724c12931354c262f2b22b",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 115.46242326098303,
+        "Y": 369.27174967269997
+      },
+      {
+        "Name": "Rotação",
+        "ShowGeometry": true,
+        "Id": "3f6865cfe733434491030c5d2b5f81d7",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 114.65693678610546,
+        "Y": 494.23696127677749
+      },
+      {
+        "Name": "Gerar o arquivo TXT Atualizado",
+        "ShowGeometry": true,
+        "Id": "94696efbb3cc447b92505f86709e4c96",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 880.39750044129232,
+        "Y": 301.50788677917922
+      },
+      {
+        "Name": "Módulo Dimensional",
+        "ShowGeometry": true,
+        "Id": "0b8d8b1571224ffe99ff4482648af1c2",
+        "IsSetAsInput": false,
+        "IsSetAsOutput": false,
+        "Excluded": false,
+        "X": 109.6152985958214,
+        "Y": 618.64593664990775
+      }
+    ],
+    "Annotations": [],
+    "X": 110.50204245276723,
+    "Y": 211.93469136027,
+    "Zoom": 0.43507412310125504
+  }
+}
